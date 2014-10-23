@@ -1,0 +1,20 @@
+<VirtualHost *:80>
+  ServerName {cliente}.nimble.com.br
+  DocumentRoot "/var/www/nimble.teleportweb.com.br/web"
+  DirectoryIndex index.php
+  <Directory "/var/www/nimble.teleportweb.com.br/web">
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+  </Directory>
+
+  Alias /sf /var/www/nimble.teleportweb.com.br/lib/vendor/symfony/data/web/sf
+  <Directory "/var/www/nimble.teleportweb.com.br/lib/vendor/symfony/data/web/sf">
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+  </Directory>
+
+  SetEnv NOME_CLI "{cliente}"
+  SetEnv COD_CLI "{codigo}"
+</VirtualHost>
