@@ -1,5 +1,3 @@
-#!/usr/bin/env coffee
-
 'use strict'
 
 program = require 'commander'

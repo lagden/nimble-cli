@@ -8,10 +8,7 @@ module.exports = (grunt) ->
   grunt.initConfig
 
     coffeelint:
-      files: [
-        'src/{,*/}*.coffee'
-      ]
-
+      files: ['src/{,*/}*.coffee']
 
     coffee:
       compile:
