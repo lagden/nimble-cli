@@ -11,14 +11,21 @@
   "dependencies": {
     "commander": "^2.4.0",
     "inquirer": "^0.8.0",
+    "promise": "^6.0.1",
+    "q": "^1.0.1",
     "slug": "^0.8.0"
   },
   "devDependencies": {
+    "assert": "^1.1.2",
+    "chai": "^1.9.2",
     "coffeelint": "^1.6.1",
     "grunt": "^0.4.5",
     "grunt-coffeelint": "0.0.13",
     "grunt-contrib-coffee": "^0.12.0",
+    "grunt-fixmyjs": "^0.2.0",
+    "grunt-mocha-test": "^0.12.2",
     "load-grunt-tasks": "^1.0.0",
+    "mocha": "^2.0.1",
     "time-grunt": "^1.0.0"
   }
 }

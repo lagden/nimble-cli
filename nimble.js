@@ -1,47 +1,59 @@
 'use strict';
-var core, inquirer, noArgs, program;
-
+var core, getCode, getDelete, inquirer, noArgs, program, run;
 program = require('commander');
-
 inquirer = require('inquirer');
-
 core = require('./lib/core');
-
-program.version('0.1.0');
-
-program.command('instala <cliente>').alias('i').description('Instala uma nova instância do Nimble').option('-c, --codigo <codigo>', 'Código do cliente', parseInt, 0).action(function(cliente, opts) {
-  var question;
-  if (opts.codigo === 0) {
-    question = {
-      type: 'input',
-      name: 'cod',
-      message: 'Qual é o código do cliente (' + cliente + ')?',
-      validate: function(v) {
-        var pass;
-        pass = /^\d+$/.test(v);
-        if (pass) {
-          return true;
-        } else {
-          return 'Digite um código válido';
-        }
+getCode = function (cliente) {
+  return {
+    type: 'input',
+    name: 'cod',
+    message: 'Qual \xE9 o c\xF3digo do cliente (' + cliente + ')?',
+    validate: function (v) {
+      var pass;
+      pass = /^\d+$/.test(v);
+      if (pass) {
+        return true;
+      } else {
+        return 'Digite um c\xF3digo v\xE1lido';
       }
-    };
-    inquirer.prompt(question, function(res) {
-      core(cliente, res.cod).install();
+    }
+  };
+};
+getDelete = function (cliente) {
+  return {
+    type: 'confirm',
+    name: 'rm',
+    message: 'Deseja remover o cliente (' + cliente + ')?',
+    'default': true
+  };
+};
+run = function (cmd, cliente, cod) {
+  cod = cod || null;
+  core(cliente, cod)[cmd]().then(function (msg) {
+    return console.log(msg);
+  }, function (err) {
+    return console.log(err);
+  });
+};
+program.version('0.1.0');
+program.command('instala <cliente>').alias('i').description('Instala uma nova inst\xE2ncia do Nimble').option('-c, --codigo <codigo>', 'C\xF3digo do cliente', parseInt, 0).action(function (cliente, opts) {
+  if (opts.codigo === 0) {
+    inquirer.prompt(getCode(cliente), function (res) {
+      run('install', cliente, res.cod);
     });
   } else {
-    core(cliente, opts.codigo).install();
+    run('install', cliente, opts.codigo);
   }
 });
-
-program.command('remove <cliente>').alias('rm').description('Remove uma instância do Nimble').action(function(cliente) {
-  console.log(cliente);
+program.command('remove <cliente>').alias('rm').description('Remove uma inst\xE2ncia do Nimble').action(function (cliente) {
+  inquirer.prompt(getDelete(cliente), function (res) {
+    if (res.rm) {
+      run('rm', cliente);
+    }
+  });
 });
-
 program.parse(process.argv);
-
 noArgs = program.args;
-
 if (!noArgs.length) {
   program.help();
 }

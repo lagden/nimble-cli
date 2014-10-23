@@ -23,9 +23,23 @@ module.exports = (grunt) ->
           ext: '.js'
         ]
 
+    fixmyjs:
+      options:
+        jshintrc: '.jshintrc'
+        indentpref: 'spaces'
+      fix:
+        files: [
+          expand: true
+          cwd: './'
+          src: ['{,*/}*.js', '!node_modules']
+          dest: './'
+          ext: '.js'
+        ]
+
   grunt.registerTask 'default', [
     'coffeelint'
     'coffee'
+    'fixmyjs'
   ]
 
   return
