@@ -24,7 +24,6 @@ run = (cmd, cliente, cod) ->
   core(cliente, cod)[cmd]().then(
     (msg) ->
       console.log msg
-
     (err) ->
       console.log err
   )

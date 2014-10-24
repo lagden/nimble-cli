@@ -6,55 +6,31 @@ SUFIX   = '.nimble.com.br.conf'
 fs      = require 'fs'
 path    = require 'path'
 slug    = require 'slug'
-Q       = require 'q'
+vow     = require 'vow'
+vowNode = require 'vow-node'
 
-checkFile = (cliente) ->
-  file = "#{APACHE}#{cliente}#{SUFIX}"
-  deferred = Q.defer()
-  fs.stat file, (err, stats) ->
-    if err
-      deferred.reject err
-    else
-      deferred.resolve file
-    return
-  return deferred.promise
-
-writeFile = (file, content) ->
-  deferred = Q.defer()
-  fs.writeFile file, content, (err) ->
-    if err
-      deferred.reject err
-    else
-      deferred.resolve()
-    return
-  return deferred.promise
-
-rmFile = (file, content) ->
-  deferred = Q.defer()
-  fs.unlink file, (err) ->
-    if err
-      deferred.reject err
-    else
-      deferred.resolve()
-    return
-  return deferred.promise
+checkFile = vowNode.promisify fs.stat
+writeFile = vowNode.promisify fs.writeFile
+rmFile    = vowNode.promisify fs.unlink
 
 class Core
   constructor: (cliente, cod) ->
     return new Core cliente, cod if (@ instanceof Core) is false
     @cliente = cliente
     @cod = cod || null
+    @slug = (slug @cliente).toLowerCase()
+    @file = "#{APACHE}#{@slug}#{SUFIX}"
 
   install: () ->
     cod = @cod
-    cliente = (slug @cliente).toLowerCase()
-    return checkFile(cliente).then(
+    slug = @slug
+    file = @file
+    return checkFile(file).then(
       () ->
         return 'Esse cliente já exite.'
-
       (err) ->
         r =
-          'cliente': cliente
+          'cliente': slug
           'codigo' : cod
 
         templateFile = path.join __dirname, '../template'
@@ -62,27 +38,24 @@ class Core
         content = template.replace /\{(.*?)\}/g, (a, b) ->
           return r[b]
 
-        return writeFile(err.path, content).then(
+        return writeFile(file, content).then(
           () ->
             return 'Cliente criado.'
-
           (err) ->
             return 'Falha ao criar o arquivo.'
         )
     )
 
   rm: () ->
-    cliente = (slug @cliente).toLowerCase()
-    return checkFile(cliente).then(
-      (file) ->
+    file = @file
+    return checkFile(@file).then(
+      (stats) ->
         return rmFile(file).then(
           () ->
             return 'Cliente removido.'
-
           (err) ->
             return 'Não exite esse cliente ou já foi removido.'
         )
-
       (err) ->
         return 'Não exite esse cliente ou já foi removido.'
     )
